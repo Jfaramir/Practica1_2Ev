@@ -1,5 +1,7 @@
 package codigo;
 
+import javax.swing.JTable;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -8,7 +10,7 @@ package codigo;
 
 /**
  *
- * @author xp
+ * @author http://www.chuidiang.org/java/mysql/resultset_jtable.php
  */
 public class Formulario extends javax.swing.JFrame {
 
@@ -19,7 +21,7 @@ public class Formulario extends javax.swing.JFrame {
         initComponents();
         
         
-//        gc.addColumna();
+
     }
 
     /**
@@ -36,7 +38,7 @@ public class Formulario extends javax.swing.JFrame {
         nombreColumna = new javax.swing.JTextField();
         Consulta = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        Pantalla = new javax.swing.JTextArea();
+        tabla = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -61,9 +63,18 @@ public class Formulario extends javax.swing.JFrame {
             }
         });
 
-        Pantalla.setColumns(20);
-        Pantalla.setRows(5);
-        jScrollPane1.setViewportView(Pantalla);
+        tabla.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane1.setViewportView(tabla);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -72,28 +83,27 @@ public class Formulario extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addContainerGap())
+                    .addComponent(jScrollPane1)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(Consulta)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 172, Short.MAX_VALUE)
+                        .addGap(41, 41, 41)
                         .addComponent(nombreColumna, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addGap(68, 68, 68)
                         .addComponent(AñadirColumna)
-                        .addGap(91, 91, 91))))
+                        .addGap(0, 75, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(AñadirColumna)
                     .addComponent(nombreColumna, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(Consulta))
-                .addGap(89, 89, 89))
+                .addGap(75, 75, 75))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -120,7 +130,9 @@ public class Formulario extends javax.swing.JFrame {
 
     private void ConsultaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConsultaActionPerformed
         gc.consultaStatement();
-        this.Pantalla.setText(gc.cadena_resultado);
+//        this.Pantalla.setText(gc.cadena_resultado);
+
+
     }//GEN-LAST:event_ConsultaActionPerformed
 
     /**
@@ -129,7 +141,9 @@ public class Formulario extends javax.swing.JFrame {
     
     GestorConexion gc = new GestorConexion();
     
-    
+
+
+
     
     
     public static void main(String args[]) {
@@ -167,9 +181,9 @@ public class Formulario extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AñadirColumna;
     private javax.swing.JButton Consulta;
-    private javax.swing.JTextArea Pantalla;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField nombreColumna;
+    private javax.swing.JTable tabla;
     // End of variables declaration//GEN-END:variables
 }
