@@ -1,3 +1,5 @@
+package codigo;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -15,6 +17,9 @@ public class Formulario extends javax.swing.JFrame {
      */
     public Formulario() {
         initComponents();
+        
+        
+//        gc.addColumna();
     }
 
     /**
@@ -27,18 +32,68 @@ public class Formulario extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        AñadirColumna = new javax.swing.JButton();
+        nombreColumna = new javax.swing.JTextField();
+        Consulta = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        Pantalla = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        AñadirColumna.setText("Añadir columna");
+        AñadirColumna.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AñadirColumnaActionPerformed(evt);
+            }
+        });
+
+        nombreColumna.setText("Columna");
+        nombreColumna.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                nombreColumnaMouseClicked(evt);
+            }
+        });
+
+        Consulta.setText("consulta album Neffex");
+        Consulta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ConsultaActionPerformed(evt);
+            }
+        });
+
+        Pantalla.setColumns(20);
+        Pantalla.setRows(5);
+        jScrollPane1.setViewportView(Pantalla);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 653, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1)
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(Consulta)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 172, Short.MAX_VALUE)
+                        .addComponent(nombreColumna, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(AñadirColumna)
+                        .addGap(91, 91, 91))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 476, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(AñadirColumna)
+                    .addComponent(nombreColumna, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Consulta))
+                .addGap(89, 89, 89))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -55,9 +110,28 @@ public class Formulario extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void AñadirColumnaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AñadirColumnaActionPerformed
+        gc.addColumna(nombreColumna.getText());
+    }//GEN-LAST:event_AñadirColumnaActionPerformed
+
+    private void nombreColumnaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nombreColumnaMouseClicked
+        nombreColumna.setText("");
+    }//GEN-LAST:event_nombreColumnaMouseClicked
+
+    private void ConsultaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConsultaActionPerformed
+        gc.consultaStatement();
+        this.Pantalla.setText(gc.cadena_resultado);
+    }//GEN-LAST:event_ConsultaActionPerformed
+
     /**
      * @param args the command line arguments
      */
+    
+    GestorConexion gc = new GestorConexion();
+    
+    
+    
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -91,6 +165,11 @@ public class Formulario extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AñadirColumna;
+    private javax.swing.JButton Consulta;
+    private javax.swing.JTextArea Pantalla;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField nombreColumna;
     // End of variables declaration//GEN-END:variables
 }
