@@ -30,21 +30,16 @@ public class GestorConexion {
             String url1 = "jdbc:mysql://localhost:3306/discografica?"
                     + "useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
             String user = "root";
-            String password = "";
+            String password = "root";
             
             conn1 =  DriverManager.getConnection(url1, user, password);
             
-            ResultSetMetaData metaDatos = rs.getMetaData();
+//            ResultSetMetaData metaDatos = rs.getMetaData();
             
             
             if (conn1 != null) {
                 System.out.println("Conectado a discográfica…");
-            }
-            
-            
-            
-            
-            
+            } 
             
         } catch (SQLException ex) {
             System.out.println("ERROR: dirección o usuario/clave no válida");
@@ -96,27 +91,30 @@ public class GestorConexion {
             conn1.setAutoCommit(false);
             
             Statement sta = conn1.createStatement();
-            String query = "SELECT * FROM album WHERE Titulo like 'G%'";
-            ResultSet rs = sta.executeQuery(query);
-           
+            String query = "SELECT * FROM album ";
+            ResultSet rs = sta.executeQuery(query);           
             ResultSetMetaData metaDatos = rs.getMetaData();
             
-//          Se obtiene el número de columnas.
-            int numeroColumnas = metaDatos.getColumnCount();
+            int numColumnas = metaDatos.getColumnCount();
             
-//          Se crea un array de etiquetas para rellenar
-            Object[] etiquetas = new Object[numeroColumnas];
+//            https://www.youtube.com/watch?v=9dYyn8hUT8w
+//            
+////          Se obtiene el número de columnas.
+//            int numeroColumnas = metaDatos.getColumnCount();
+//            
+////          Se crea un array de etiquetas para rellenar
+//            Object[] etiquetas = new Object[numeroColumnas];
+//            
+//            // Se obtiene cada una de las etiquetas para cada columna
+//            for (int i = 0; i < numeroColumnas; i++){
+////              Nuevamente, para ResultSetMetaData la primera columna es la 1. 
+//                etiquetas[i] = metaDatos.getColumnLabel(i + 1); 
+//            }
+//            
+//            modelo.setColumnIdentifiers(etiquetas);
             
-            // Se obtiene cada una de las etiquetas para cada columna
-            for (int i = 0; i < numeroColumnas; i++){
-//              Nuevamente, para ResultSetMetaData la primera columna es la 1. 
-                etiquetas[i] = metaDatos.getColumnLabel(i + 1); 
-            }
             
-            modelo.setColumnIdentifiers(etiquetas);
-            
-            
-            
+//            
 //            conn1.setAutoCommit(false);
 //            
 //            Statement sta = conn1.createStatement();
@@ -138,7 +136,7 @@ public class GestorConexion {
 //            conn1.commit(); 
 //            
 //            System.out.println("Consultado Correctamente");
-//            
+////            
 //            return cadena_resultado;
 //           
             

@@ -1,6 +1,13 @@
 package codigo;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Statement;
 import javax.swing.JTable;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
+import javax.swing.table.DefaultTableModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -17,11 +24,46 @@ public class Formulario extends javax.swing.JFrame {
     /**
      * Creates new form Formulario
      */
+    
+    /**
+     * Mete el modelo que recibe en la tabla.
+     * @param modelo
+     */
+   
+    Connection conn1; 
+    String cadena_resultado = "";
+    String cadena_resultado2 = "";
+    String cadena_resultado3 = "";
     public Formulario() {
         initComponents();
         
+        try {
+            
+        conn1.setAutoCommit(false);
+            
+            Statement sta = conn1.createStatement();
         
-
+            String query = "SELECT * FROM album WHERE Titulo like 'G%'";
+            ResultSet rs = sta.executeQuery(query);
+            
+            while (rs.next()) {  
+                
+                cadena_resultado = cadena_resultado + rs.getInt("Id");
+                cadena_resultado2 = cadena_resultado2 + rs.getString("Titulo");
+                cadena_resultado3 = cadena_resultado3 + rs.getString("Anno");
+//                System.out.println("ID- " + rs.getInt("Id") + ", Titulo " + rs.getString("Titulo") + ", Año " + rs.getString("Anno"));
+            }
+            rs.close();
+            
+            sta.close();
+            
+            conn1.commit(); 
+            
+            System.out.println("Consultado Correctamente");
+        } catch (Exception e) {
+        }
+        
+//            
     }
 
     /**
