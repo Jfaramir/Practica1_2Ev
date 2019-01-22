@@ -1,6 +1,7 @@
 package codigo;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -173,6 +174,44 @@ public class Formulario extends javax.swing.JFrame {
     private void ConsultaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConsultaActionPerformed
         gc.consultaStatement();
 //        this.Pantalla.setText(gc.cadena_resultado);
+        try {
+            String url1 = "jdbc:mysql://localhost:3306/discografica?"
+                    + "useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+            String user = "root";
+            String password = "root";
+            
+            conn1 =  DriverManager.getConnection(url1, user, password);
+            
+            conn1.setAutoCommit(false);
+            
+            Statement sta = conn1.createStatement();
+            String query = "SELECT * FROM album ";
+            ResultSet rs = sta.executeQuery(query);           
+            ResultSetMetaData metaDatos = rs.getMetaData();
+            
+            int numColumnas = metaDatos.getColumnCount();
+            
+            DefaultTableModel modelo = new DefaultTableModel();
+            
+            this.tabla.setModel(modelo);
+            
+            for (int i = 1; i <= numColumnas; i++) {
+                modelo.addColumn(metaDatos.getColumnLabel(i));
+            }
+            
+            while (rs.next()) {                
+                Object [] fila = new Object[numColumnas];
+                
+                for (int i = 0; i < numColumnas; i++) {
+                    fila [i] = rs.getObject(i +1);
+                }
+                modelo.addRow(fila);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        
 
 
     }//GEN-LAST:event_ConsultaActionPerformed

@@ -137,7 +137,7 @@ public class GestorConexion {
 //            
 //            System.out.println("Consultado Correctamente");
 ////            
-//            return cadena_resultado;
+            return cadena_resultado;
 //           
             
         } catch (Exception e) {
