@@ -2,6 +2,7 @@ package codigo;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -31,40 +32,41 @@ public class Formulario extends javax.swing.JFrame {
      * @param modelo
      */
    
-    Connection conn1; 
-    String cadena_resultado = "";
-    String cadena_resultado2 = "";
-    String cadena_resultado3 = "";
+    
     public Formulario() {
-        initComponents();
+        initComponents();    
         
         try {
+            gc.conn1.setAutoCommit(false);
             
-        conn1.setAutoCommit(false);
+            Statement sta = gc.conn1.createStatement();
             
-            Statement sta = conn1.createStatement();
-        
-            String query = "SELECT * FROM album WHERE Titulo like 'G%'";
-            ResultSet rs = sta.executeQuery(query);
+            String query = "SELECT * FROM album ";
             
-            while (rs.next()) {  
-                
-                cadena_resultado = cadena_resultado + rs.getInt("Id");
-                cadena_resultado2 = cadena_resultado2 + rs.getString("Titulo");
-                cadena_resultado3 = cadena_resultado3 + rs.getString("Anno");
-//                System.out.println("ID- " + rs.getInt("Id") + ", Titulo " + rs.getString("Titulo") + ", Año " + rs.getString("Anno"));
+            ResultSet rs = sta.executeQuery(query);           
+            ResultSetMetaData metaDatos = rs.getMetaData();
+            
+            int numColumnas = metaDatos.getColumnCount();
+            
+            DefaultTableModel modelo = new DefaultTableModel();
+            
+            this.tabla.setModel(modelo);
+            
+            for (int i = 1; i <= numColumnas; i++) {
+                modelo.addColumn(metaDatos.getColumnLabel(i));
             }
-            rs.close();
             
-            sta.close();
-            
-            conn1.commit(); 
-            
-            System.out.println("Consultado Correctamente");
+            while (rs.next()) {                
+                Object [] fila = new Object[numColumnas];
+                
+                for (int i = 0; i < numColumnas; i++) {
+                    fila [i] = rs.getObject(i +1);
+                }
+                modelo.addRow(fila);
+            }
         } catch (Exception e) {
+            e.printStackTrace();
         }
-        
-//            
     }
 
     /**
@@ -82,6 +84,7 @@ public class Formulario extends javax.swing.JFrame {
         Consulta = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
+        jComboBox1 = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -119,6 +122,13 @@ public class Formulario extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tabla);
 
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Album", "Cancion", "Melendi", "Neffex" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -135,13 +145,19 @@ public class Formulario extends javax.swing.JFrame {
                         .addComponent(AñadirColumna)
                         .addGap(0, 75, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(213, 213, 213))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(AñadirColumna)
                     .addComponent(nombreColumna, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -172,20 +188,16 @@ public class Formulario extends javax.swing.JFrame {
     }//GEN-LAST:event_nombreColumnaMouseClicked
 
     private void ConsultaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConsultaActionPerformed
-        gc.consultaStatement();
-//        this.Pantalla.setText(gc.cadena_resultado);
         try {
-            String url1 = "jdbc:mysql://localhost:3306/discografica?"
-                    + "useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
-            String user = "root";
-            String password = "root";
+            gc.conn1.setAutoCommit(false);
             
-            conn1 =  DriverManager.getConnection(url1, user, password);
             
-            conn1.setAutoCommit(false);
             
-            Statement sta = conn1.createStatement();
-            String query = "SELECT * FROM album ";
+            String query = "SELECT * FROM cancion ";
+            
+            Statement sta = gc.conn1.createStatement();
+            
+            
             ResultSet rs = sta.executeQuery(query);           
             ResultSetMetaData metaDatos = rs.getMetaData();
             
@@ -207,14 +219,95 @@ public class Formulario extends javax.swing.JFrame {
                 }
                 modelo.addRow(fila);
             }
+            
+            rs.close();
+            
+            sta.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        
-
-
     }//GEN-LAST:event_ConsultaActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        if (jComboBox1.getSelectedItem() == "Album") {
+            try {
+            gc.conn1.setAutoCommit(false);
+            
+            String query = "SELECT * FROM ? ";
+            
+            PreparedStatement pst = gc.conn1.prepareStatement(query);
+            pst.setString(1, jComboBox1.getSelectedItem().toString());
+            
+            ResultSet rs = pst.executeQuery(query);           
+            ResultSetMetaData metaDatos = rs.getMetaData();
+            
+            int numColumnas = metaDatos.getColumnCount();
+            
+            DefaultTableModel modelo = new DefaultTableModel();
+            
+            this.tabla.setModel(modelo);
+            
+            for (int i = 1; i <= numColumnas; i++) {
+                modelo.addColumn(metaDatos.getColumnLabel(i));
+            }
+            
+            while (rs.next()) {                
+                Object [] fila = new Object[numColumnas];
+                
+                for (int i = 0; i < numColumnas; i++) {
+                    fila [i] = rs.getObject(i +1);
+                }
+                modelo.addRow(fila);
+            }
+            
+            rs.close();
+            
+            pst.close();
+        
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        }else {
+            try {
+            gc.conn1.setAutoCommit(false);
+            
+            
+            
+            String query = "SELECT * FROM ? ";
+            
+            PreparedStatement pst = gc.conn1.prepareStatement(query);
+            pst.setString(1, jComboBox1.getSelectedItem().toString());
+            
+            ResultSet rs = pst.executeQuery(query);           
+            ResultSetMetaData metaDatos = rs.getMetaData();
+            
+            int numColumnas = metaDatos.getColumnCount();
+            
+            DefaultTableModel modelo = new DefaultTableModel();
+            
+            this.tabla.setModel(modelo);
+            
+            for (int i = 1; i <= numColumnas; i++) {
+                modelo.addColumn(metaDatos.getColumnLabel(i));
+            }
+            
+            while (rs.next()) {                
+                Object [] fila = new Object[numColumnas];
+                
+                for (int i = 0; i < numColumnas; i++) {
+                    fila [i] = rs.getObject(i +1);
+                }
+                modelo.addRow(fila);
+            }
+            
+            rs.close();
+            
+            pst.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        }
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -262,6 +355,7 @@ public class Formulario extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AñadirColumna;
     private javax.swing.JButton Consulta;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField nombreColumna;
