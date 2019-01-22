@@ -30,7 +30,7 @@ public class GestorConexion {
             String url1 = "jdbc:mysql://localhost:3306/discografica?"
                     + "useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
             String user = "root";
-            String password = "root";
+            String password = "";
             
             conn1 =  DriverManager.getConnection(url1, user, password);
             
@@ -45,8 +45,7 @@ public class GestorConexion {
             System.out.println("ERROR: dirección o usuario/clave no válida");
             ex.printStackTrace();
         }
-    }
-    
+    }   
     
     public void addColumna(String nombre){
         try {
@@ -151,6 +150,36 @@ public class GestorConexion {
                 }
                e.printStackTrace();
                return fallo;
+        }
+    }
+    
+    public void insertarDatosCancion(/*String Id,String nombre, String duracion, String letras, String Id_Album*/){
+        try {
+            conn1.setAutoCommit(false);
+            
+            Statement sta = conn1.createStatement();
+            sta.executeUpdate("INSERT INTO album VALUES(6,'Let it Be','The Beatles') ");
+//            sta.executeUpdate("INSERT INTO cancion VALUES("+ Id +", "+ nombre +", "+ duracion +", "+ letras +", "+ Id_Album +")");
+            System.out.println("insertado guay");
+            
+            
+           
+            
+            sta.close();
+            conn1.commit();
+            System.out.println("Insertado Correctamente");
+        } catch (Exception e) {
+               System.out.println("Error");
+               
+               try {
+                    if(conn1 != null){
+                        conn1.rollback();
+                    }
+                } catch (Exception se2) {
+                    se2.printStackTrace();
+                }
+               
+                e.printStackTrace();
         }
     }
 }
