@@ -18,9 +18,7 @@ import java.sql.Statement;
  */
 public class GestorConexion {
     Connection conn1; 
-    String cadena_resultado = "";
-    String cadena_resultado2 = "";
-    String cadena_resultado3 = "";
+    String cadena_error = "";
    
     public GestorConexion() {
         conn1 = null;
@@ -30,7 +28,7 @@ public class GestorConexion {
             String url1 = "jdbc:mysql://localhost:3306/discografica?"
                     + "useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
             String user = "root";
-            String password = "";
+            String password = "root";
             
             conn1 =  DriverManager.getConnection(url1, user, password);
             
@@ -44,6 +42,7 @@ public class GestorConexion {
         } catch (SQLException ex) {
             System.out.println("ERROR: dirección o usuario/clave no válida");
             ex.printStackTrace();
+            cadena_error = ex.toString();
         }
     }   
     
@@ -68,8 +67,10 @@ public class GestorConexion {
                     }
                 } catch (Exception se2) {
                     se2.printStackTrace();
+                    cadena_error = se2.toString();
                 }
              e.printStackTrace();
+             cadena_error = e.toString();
         }  
     }
     
@@ -80,106 +81,65 @@ public class GestorConexion {
         } catch (SQLException e) {
             System.out.println("Error al cerrar la conexion");
             e.printStackTrace();
+            cadena_error = e.toString();
         }
     }
     
-     public String consultaStatement(){
-        String fallo = "error";
-        
+    public void insertarDatosCancion(String id,String noombre, String duracioon, String letrass, String Id_Albuum){
         try {
             conn1.setAutoCommit(false);
             
             Statement sta = conn1.createStatement();
-            String query = "SELECT * FROM album ";
-            ResultSet rs = sta.executeQuery(query);           
-            ResultSetMetaData metaDatos = rs.getMetaData();
-            
-            int numColumnas = metaDatos.getColumnCount();
-            
-//            https://www.youtube.com/watch?v=9dYyn8hUT8w
-//            
-////          Se obtiene el número de columnas.
-//            int numeroColumnas = metaDatos.getColumnCount();
-//            
-////          Se crea un array de etiquetas para rellenar
-//            Object[] etiquetas = new Object[numeroColumnas];
-//            
-//            // Se obtiene cada una de las etiquetas para cada columna
-//            for (int i = 0; i < numeroColumnas; i++){
-////              Nuevamente, para ResultSetMetaData la primera columna es la 1. 
-//                etiquetas[i] = metaDatos.getColumnLabel(i + 1); 
-//            }
-//            
-//            modelo.setColumnIdentifiers(etiquetas);
-            
-            
-//            
-//            conn1.setAutoCommit(false);
-//            
-//            Statement sta = conn1.createStatement();
-//        
-//            String query = "SELECT * FROM album WHERE Titulo like 'G%'";
-//            ResultSet rs = sta.executeQuery(query);
-//            
-//            while (rs.next()) {  
-//                
-//                cadena_resultado = cadena_resultado + rs.getInt("Id");
-//                cadena_resultado2 = cadena_resultado2 + rs.getString("Titulo");
-//                cadena_resultado3 = cadena_resultado3 + rs.getString("Anno");
-////                System.out.println("ID- " + rs.getInt("Id") + ", Titulo " + rs.getString("Titulo") + ", Año " + rs.getString("Anno"));
-//            }
-//            rs.close();
-//            
-//            sta.close();
-//            
-//            conn1.commit(); 
-//            
-//            System.out.println("Consultado Correctamente");
-////            
-            return cadena_resultado;
-//           
-            
-        } catch (Exception e) {
-               System.out.println("Error");
-               try {
-                    if(conn1 != null){
-                        conn1.rollback();
-                    }
-                } catch (Exception se2) {
-                    se2.printStackTrace();
-                }
-               e.printStackTrace();
-               return fallo;
-        }
-    }
-    
-    public void insertarDatosCancion(/*String Id,String nombre, String duracion, String letras, String Id_Album*/){
-        try {
-            conn1.setAutoCommit(false);
-            
-            Statement sta = conn1.createStatement();
-            sta.executeUpdate("INSERT INTO album VALUES(6,'Let it Be','The Beatles') ");
-//            sta.executeUpdate("INSERT INTO cancion VALUES("+ Id +", "+ nombre +", "+ duracion +", "+ letras +", "+ Id_Album +")");
+
+            sta.executeUpdate("INSERT INTO cancion VALUES('"+ id +"', '"+ noombre +"', '"+ duracioon +"', '"+ letrass +"', '"+ Id_Albuum +"')");
+
             System.out.println("insertado guay");
             
+            sta.close();
             
-           
+            conn1.commit();
+        } catch (Exception e) {
+            System.out.println("Error");
+               
+            try {
+                if(conn1 != null){
+                    conn1.rollback();
+                }
+            } catch (Exception se2) {
+                se2.printStackTrace();
+                cadena_error = se2.toString();
+            }
+               
+            e.printStackTrace();
+            cadena_error = e.toString();
+        }
+    }
+    public void insertarDatosAlbum(String idAlbum,String noombreAlbum, String AnoPublicacion){
+        try {
+            conn1.setAutoCommit(false);
+            
+            Statement sta = conn1.createStatement();
+
+            sta.executeUpdate("INSERT INTO album VALUES('"+ idAlbum +"', '"+ noombreAlbum +"', '"+ AnoPublicacion +"')");
+            
+            System.out.println("insertado guay");
             
             sta.close();
+            
             conn1.commit();
-            System.out.println("Insertado Correctamente");
         } catch (Exception e) {
-               System.out.println("Error");
+            System.out.println("Error");
                
-               try {
-                    if(conn1 != null){
-                        conn1.rollback();
-                    }
-                } catch (Exception se2) {
-                    se2.printStackTrace();
+            try {
+                if(conn1 != null){
+                    conn1.rollback();
                 }
-               
-                e.printStackTrace();
+            } catch (Exception se2) {
+                se2.printStackTrace();
+                cadena_error = se2.toString();
+            }
+            e.printStackTrace();
+            cadena_error = e.toString();
         }
     }
 }

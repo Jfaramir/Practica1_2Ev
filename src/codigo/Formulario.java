@@ -1,14 +1,9 @@
 package codigo;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
-import javax.swing.JTable;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -32,6 +27,8 @@ public class Formulario extends javax.swing.JFrame {
      * @param modelo
      */
    
+    String cadena_error = "";
+    DefaultTableModel modelo;
     
     public Formulario() {
         initComponents();    
@@ -48,7 +45,7 @@ public class Formulario extends javax.swing.JFrame {
             
             int numColumnas = metaDatos.getColumnCount();
             
-            DefaultTableModel modelo = new DefaultTableModel();
+            modelo = new DefaultTableModel();
             
             this.tabla.setModel(modelo);
             
@@ -64,11 +61,20 @@ public class Formulario extends javax.swing.JFrame {
                 }
                 modelo.addRow(fila);
             }
+            
+            rs.close();
+            
+            sta.close();
         } catch (Exception e) {
             e.printStackTrace();
+            cadena_error = e.toString();
+            errores.setText(cadena_error);
         }
+        
     }
 
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -81,11 +87,11 @@ public class Formulario extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         AñadirColumna = new javax.swing.JButton();
         nombreColumna = new javax.swing.JTextField();
-        Consulta = new javax.swing.JButton();
+        ConsultaCancion = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
         InsertarAlbum = new javax.swing.JButton();
-        Consulta1 = new javax.swing.JButton();
+        ConsultaAlbum = new javax.swing.JButton();
         ConsultaPorId = new javax.swing.JButton();
         Id = new javax.swing.JTextField();
         InsertarCancion = new javax.swing.JButton();
@@ -97,10 +103,12 @@ public class Formulario extends javax.swing.JFrame {
         Duracion = new javax.swing.JTextField();
         Letra = new javax.swing.JTextField();
         Id_AlbumNewCancion = new javax.swing.JTextField();
+        errores = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         AñadirColumna.setText("Añadir columna");
+        AñadirColumna.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         AñadirColumna.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 AñadirColumnaActionPerformed(evt);
@@ -109,17 +117,14 @@ public class Formulario extends javax.swing.JFrame {
 
         nombreColumna.setEditable(false);
         nombreColumna.setText("Imagen Album");
-        nombreColumna.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                nombreColumnaMouseClicked(evt);
-            }
-        });
+        nombreColumna.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
 
-        Consulta.setText("consultar tabla cancion");
-        Consulta.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        Consulta.addActionListener(new java.awt.event.ActionListener() {
+        ConsultaCancion.setText("consultar tabla cancion");
+        ConsultaCancion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ConsultaCancion.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        ConsultaCancion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ConsultaActionPerformed(evt);
+                ConsultaCancionActionPerformed(evt);
             }
         });
 
@@ -134,32 +139,41 @@ public class Formulario extends javax.swing.JFrame {
 
             }
         ));
+        tabla.setEnabled(false);
         tabla.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tabla);
 
         InsertarAlbum.setText("Insertar nuevo album");
+        InsertarAlbum.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         InsertarAlbum.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 InsertarAlbumActionPerformed(evt);
             }
         });
 
-        Consulta1.setText("consultar tabla album");
-        Consulta1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        Consulta1.addActionListener(new java.awt.event.ActionListener() {
+        ConsultaAlbum.setText("consultar tabla album");
+        ConsultaAlbum.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ConsultaAlbum.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        ConsultaAlbum.setMaximumSize(new java.awt.Dimension(143, 23));
+        ConsultaAlbum.setMinimumSize(new java.awt.Dimension(143, 23));
+        ConsultaAlbum.setPreferredSize(new java.awt.Dimension(143, 23));
+        ConsultaAlbum.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Consulta1ActionPerformed(evt);
+                ConsultaAlbumActionPerformed(evt);
             }
         });
 
         ConsultaPorId.setText("Consulta cancion por id:");
+        ConsultaPorId.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         ConsultaPorId.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ConsultaPorIdActionPerformed(evt);
             }
         });
 
+        Id.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         Id.setText("1");
+        Id.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         Id.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 IdMousePressed(evt);
@@ -167,67 +181,133 @@ public class Formulario extends javax.swing.JFrame {
         });
 
         InsertarCancion.setText("Insertar nueva cancion");
+        InsertarCancion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         InsertarCancion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 InsertarCancionActionPerformed(evt);
             }
         });
 
+        IdNewAlbum.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         IdNewAlbum.setText("Id");
+        IdNewAlbum.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        IdNewAlbum.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                IdNewAlbumMousePressed(evt);
+            }
+        });
 
+        IdNewCancion.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         IdNewCancion.setText("Id");
+        IdNewCancion.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        IdNewCancion.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                IdNewCancionMousePressed(evt);
+            }
+        });
 
+        Nombre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         Nombre.setText("Nombre");
+        Nombre.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        Nombre.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                NombreMousePressed(evt);
+            }
+        });
 
+        Año.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         Año.setText("Año");
+        Año.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        Año.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                AñoMousePressed(evt);
+            }
+        });
 
+        Titulo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         Titulo.setText("Titulo");
+        Titulo.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        Titulo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                TituloMousePressed(evt);
+            }
+        });
 
+        Duracion.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         Duracion.setText("Duracion");
+        Duracion.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        Duracion.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                DuracionMousePressed(evt);
+            }
+        });
 
+        Letra.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         Letra.setText("Letra");
+        Letra.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        Letra.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                LetraMousePressed(evt);
+            }
+        });
 
+        Id_AlbumNewCancion.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         Id_AlbumNewCancion.setText("Id_Album");
+        Id_AlbumNewCancion.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        Id_AlbumNewCancion.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                Id_AlbumNewCancionMousePressed(evt);
+            }
+        });
+
+        errores.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 546, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(errores, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(InsertarCancion, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(InsertarAlbum, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(Consulta, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-                            .addComponent(ConsultaPorId, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(Consulta1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(Id, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(InsertarCancion, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(InsertarAlbum, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(ConsultaPorId, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE))
                                 .addGap(18, 18, 18)
-                                .addComponent(nombreColumna, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(AñadirColumna, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(Id, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(nombreColumna, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(AñadirColumna, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(IdNewCancion, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(Titulo, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(Duracion, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(Letra, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(Id_AlbumNewCancion))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(IdNewAlbum, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(Nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(14, 14, 14)
+                                                .addComponent(Año, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(ConsultaAlbum, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(IdNewCancion, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(Titulo, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(Duracion, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(Letra, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(Id_AlbumNewCancion, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(IdNewAlbum, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(Nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(14, 14, 14)
-                                .addComponent(Año, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(ConsultaCancion, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+                                .addGap(296, 296, 296)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -235,17 +315,17 @@ public class Formulario extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ConsultaPorId)
-                    .addComponent(Id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(nombreColumna, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(AñadirColumna))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(nombreColumna, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(ConsultaPorId, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Id)
+                    .addComponent(AñadirColumna, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Consulta)
-                    .addComponent(Consulta1))
+                    .addComponent(ConsultaCancion)
+                    .addComponent(ConsultaAlbum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(InsertarAlbum)
@@ -260,7 +340,9 @@ public class Formulario extends javax.swing.JFrame {
                     .addComponent(Duracion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(Letra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(Id_AlbumNewCancion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29))
+                .addGap(18, 18, 18)
+                .addComponent(errores, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -277,7 +359,7 @@ public class Formulario extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void Consulta1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Consulta1ActionPerformed
+    private void ConsultaAlbumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConsultaAlbumActionPerformed
         try {
             gc.conn1.setAutoCommit(false);
 
@@ -290,7 +372,7 @@ public class Formulario extends javax.swing.JFrame {
 
             int numColumnas = metaDatos.getColumnCount();
 
-            DefaultTableModel modelo = new DefaultTableModel();
+             modelo = new DefaultTableModel();
 
             this.tabla.setModel(modelo);
 
@@ -306,20 +388,27 @@ public class Formulario extends javax.swing.JFrame {
                 }
                 modelo.addRow(fila);
             }
-
+            
             rs.close();
 
             sta.close();
         } catch (Exception e) {
             e.printStackTrace();
+            cadena_error = e.toString();
+            errores.setText(cadena_error);
         }
-    }//GEN-LAST:event_Consulta1ActionPerformed
+    }//GEN-LAST:event_ConsultaAlbumActionPerformed
 
     private void InsertarAlbumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InsertarAlbumActionPerformed
-        // TODO add your handling code here:
+        gc.insertarDatosAlbum(IdNewAlbum.getText(), Nombre.getText(), Año.getText());
+        
+        ConsultaAlbumActionPerformed(evt);
+        
+        
+            errores.setText(gc.cadena_error);
     }//GEN-LAST:event_InsertarAlbumActionPerformed
 
-    private void ConsultaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConsultaActionPerformed
+    private void ConsultaCancionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConsultaCancionActionPerformed
         try {
             gc.conn1.setAutoCommit(false);
 
@@ -332,7 +421,7 @@ public class Formulario extends javax.swing.JFrame {
 
             int numColumnas = metaDatos.getColumnCount();
 
-            DefaultTableModel modelo = new DefaultTableModel();
+            modelo = new DefaultTableModel();
 
             this.tabla.setModel(modelo);
 
@@ -354,15 +443,16 @@ public class Formulario extends javax.swing.JFrame {
             sta.close();
         } catch (Exception e) {
             e.printStackTrace();
+            cadena_error = e.toString();
+            errores.setText(cadena_error);
         }
-    }//GEN-LAST:event_ConsultaActionPerformed
-
-    private void nombreColumnaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nombreColumnaMouseClicked
-        nombreColumna.setText("");
-    }//GEN-LAST:event_nombreColumnaMouseClicked
+    }//GEN-LAST:event_ConsultaCancionActionPerformed
 
     private void AñadirColumnaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AñadirColumnaActionPerformed
         gc.addColumna(nombreColumna.getText());
+        
+        
+            errores.setText(gc.cadena_error);
     }//GEN-LAST:event_AñadirColumnaActionPerformed
 
     private void ConsultaPorIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConsultaPorIdActionPerformed
@@ -371,6 +461,8 @@ public class Formulario extends javax.swing.JFrame {
                 
                 String ID = Id.getText();
                 //con la interrogacion salta un fallo por mi forma de crear la tabla o al menos eso es lo q creo
+
+
 //                String query = "SELECT * FROM cancion WHERE Id like ? ";
                 String query = "SELECT * FROM cancion WHERE Id like "+ ID;
                 Statement sta = gc.conn1.createStatement();
@@ -385,7 +477,7 @@ public class Formulario extends javax.swing.JFrame {
 
                 int numColumnas = metaDatos.getColumnCount();
 
-                DefaultTableModel modelo = new DefaultTableModel();
+                modelo = new DefaultTableModel();
 
                 this.tabla.setModel(modelo);
 
@@ -412,6 +504,8 @@ public class Formulario extends javax.swing.JFrame {
 
             } catch (Exception e) {
                 e.printStackTrace();
+                cadena_error = e.toString();
+                errores.setText(cadena_error);
             }
     }//GEN-LAST:event_ConsultaPorIdActionPerformed
 
@@ -420,8 +514,45 @@ public class Formulario extends javax.swing.JFrame {
     }//GEN-LAST:event_IdMousePressed
 
     private void InsertarCancionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InsertarCancionActionPerformed
-        gc.insertarDatosCancion(/*IdNewCancion.getText(), Titulo.getText(), Duracion.getText(), Letra.getText(), Id_AlbumNewCancion.getText()*/);
+        gc.insertarDatosCancion(IdNewCancion.getText(), Titulo.getText(), Duracion.getText(), Letra.getText(), Id_AlbumNewCancion.getText());
+        
+        ConsultaCancionActionPerformed(evt);
+        
+        
+            errores.setText(gc.cadena_error);
     }//GEN-LAST:event_InsertarCancionActionPerformed
+
+    private void Id_AlbumNewCancionMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Id_AlbumNewCancionMousePressed
+        Id_AlbumNewCancion.setText("");
+    }//GEN-LAST:event_Id_AlbumNewCancionMousePressed
+
+    private void LetraMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LetraMousePressed
+        Letra.setText("");
+    }//GEN-LAST:event_LetraMousePressed
+
+    private void DuracionMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DuracionMousePressed
+        Duracion.setText("");
+    }//GEN-LAST:event_DuracionMousePressed
+
+    private void TituloMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TituloMousePressed
+        Titulo.setText("");
+    }//GEN-LAST:event_TituloMousePressed
+
+    private void IdNewCancionMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IdNewCancionMousePressed
+        IdNewCancion.setText("");
+    }//GEN-LAST:event_IdNewCancionMousePressed
+
+    private void IdNewAlbumMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IdNewAlbumMousePressed
+        IdNewAlbum.setText("");
+    }//GEN-LAST:event_IdNewAlbumMousePressed
+
+    private void NombreMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_NombreMousePressed
+        Nombre.setText("");
+    }//GEN-LAST:event_NombreMousePressed
+
+    private void AñoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AñoMousePressed
+        Año.setText("");
+    }//GEN-LAST:event_AñoMousePressed
 
     /**
      * @param args the command line arguments
@@ -469,8 +600,8 @@ public class Formulario extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AñadirColumna;
     private javax.swing.JTextField Año;
-    private javax.swing.JButton Consulta;
-    private javax.swing.JButton Consulta1;
+    private javax.swing.JButton ConsultaAlbum;
+    private javax.swing.JButton ConsultaCancion;
     private javax.swing.JButton ConsultaPorId;
     private javax.swing.JTextField Duracion;
     private javax.swing.JTextField Id;
@@ -482,6 +613,7 @@ public class Formulario extends javax.swing.JFrame {
     private javax.swing.JTextField Letra;
     private javax.swing.JTextField Nombre;
     private javax.swing.JTextField Titulo;
+    private javax.swing.JLabel errores;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField nombreColumna;
